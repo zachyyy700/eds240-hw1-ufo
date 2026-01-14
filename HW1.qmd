@@ -135,7 +135,7 @@ df_shape <- ufo_sightings |>
 
 7.  **What does `fct_reorder` do when it is applied to the `shape` variable? What would have happened if this step was not performed?**
 
-    -   This reorders the shape column based on values in the `total_sightings` column.
+    -   This reorders the shape column based on values in the `total_sightings` column. Without this step, the `shape` variable would be in alphabetical order.
 
 8.  **What is the purpose of rescaling `opacity_val`? And why rescale from 0.3 to 1?**
 
@@ -171,7 +171,7 @@ df_day_hour <- ufo_sightings |>
 
 10. **What is the purpose of the last line inside the `case_when()` statement (`TRUE ~ paste0(hour - 12, "pm")`)?**
 
-    -   This line catches any cases where the `hour` variable is in 24 hour time (greater than 12) and convert it to "xyzpm".
+    -   This line catches any cases where the `hour` variable is in 24 hour time (greater than 12) and convert it to "xpm".
 
 ## III. Prepare text elements
 
@@ -193,7 +193,7 @@ caption <- glue("{original}{space}{dan_github}
 
 11. **In your own words, what is the difference between `paste0()` and `glue()`? Why did the author use `paste0` to construct `quotes` and `glue` to construct the other text elements?**
 
-    -   Answer here
+    -   From my understanding, `glue` enables the user to reference variables more easily without needed to add another argument and quotes like in `paste0`. For example the line: `caption <- glue("{original}{space}{dan_github}`, references previously made variables in a more convenient way, especially when combining html components.
 
 ## IV. Build plots
 
@@ -235,7 +235,7 @@ plot_shape <- ggplot(data = df_shape) +
 
 12. **Explain the values provided to the `x` aesthetic for both text geoms (`shape` & `total_sightings`).**
 
-    -   The values provided in the `x` aesthetic controls the x position of the text in each bar.
+    -   The values provided in the `x` aesthetic controls the x position of the text in each bar. Changing the values from 200 to 500, shifts the text horizontally.
 
 ### ii. Build `plot_us`
 
@@ -275,7 +275,7 @@ plot_us <-  ggplot(df_us) +
 
 13. **Consider the order of `geom_*()` layers in the the above plot (`plot_us`). Why did the author order the layers in this way?**
 
-    -   Answer here
+    -   The `geom_rect()` layer is the green-ish background behind the state & number texts. Therefore, this must be placed first in the ggplot code or else the text would be covered up if placed afterwards.
 
 ### iii. Build `plot_day`
 
@@ -309,11 +309,11 @@ plot_day <- ggplot(data = df_day_hour) +
 
 14. **This plot includes one-letter labels for each day of the week. How is ths accomplished when week days are written using their three-letter abbreviations (e.g. `Mon`, `Tue`) in the `df_day_hour` data frame?**
 
-    -   Answer here
+    -   This is done with the `str_sub()` function in the `label =` argument, this allows us to extract substrings from a character vector given a start and an end. In this case, the start and end are both 1, so only the first letter of the `wday` variable is extracted onto the label.
 
 15. **What role do the `ylim()` and `xlim()` functions play in shaping a ggplot, and how do they change the visual layout of this particular plot? To better understand their effect, try rerunning the code with each of these lines commented out and observe how the plot’s spacing and composition change.**
 
-    -   Answer here
+    -   In this polar plane, the spacing of the tiles changed. Without the limits, it was more of a filled-in circle, compared to the more donut shaped with the limits.
 
 ### iv. Build `quote*`s
 
@@ -374,7 +374,7 @@ quote3 <- ggplot() +
 
 16. **Why do you think the author chose to convert these text elements (and also in `plot_ufo`, below!) into ggplot objects (you may consider returning to this question after you've worked your way through all of the code)?**
 
-    -   Answer here
+    -   It seems like it's because of more control with the final customization and layering. It seemed very handy when creating the final plot with `inset_element()` functions.
 
 ### v. Build `plot_ufo`
 
@@ -429,7 +429,7 @@ plot_base <- ggplot() +
 
 17. **Why does the author render `plot.caption` using `ggtext::element_markdown()`, rather than `element_text()` (like he does for rendering `plot.title` and `text`)?**
 
-    -   Answer here
+    -   The plots caption comes from the `caption` object that was created earlier, and it's a line of html not regular quoted text. Similar to how we can use html in READMEs and it will render in markdown, the author had to use a function that can render this html like `ggtext::element_markdown()`.
 
 ## V. Assemble & save
 
@@ -460,11 +460,11 @@ ggsave(plot = plot_final,
 
 18. **Explain how `plot_final` is assembled. What do you think is the most challenging aspect of arranging all components into a single plot?**
 
-    -   Answer here
+    -   The final plot was 'built' on top of the base plot we made earlier. The most challenging aspect seems to be playing with all of the positions of the visual elements like plots, quotes, and ufo image.
 
 19. **Can you think of one reason the author may have chosen to separate the construction of `plot_base` and `plot_final`?**
 
-    -   Answer here
+    -   The base plot is kind of acting as a foundation and border at the same time. Since it's the title, subtitle, and the bottom caption, it's acting as the top and bottom border of the infographic and the final plot is adding all of the visuals within the border. It just seems more organized to do it this way rather than having to build the entire thing in one go.
 
 ## Answer some final reflective questions
 
@@ -472,28 +472,28 @@ ggsave(plot = plot_final,
 
     a.  **What "perceptual tasks" (from Cleveland & McGill's heirarchy) must the viewer perform to extract information from these visualizations?**
 
-        -   Answer here
+        -   The viewer would compare lengths with the bar plot and shades with the map & time plot. It makes sense to use shades for the latter two plots since there's a lot of information being encoded in the visuals. A viewer won't really care about the exact differences when comparing the states and days along with the time of day. Compared to the bar plot, the top 10 shapes were extracted from the data, so a comparison of lengths conveys this the best, a comparison of positions along a common scale.
 
     b.  **What task(s) do you think the author wanted to enable or message(s) he wanted to convey with these visualizations (see lecture 2.1, slide 16 for examples)? Be sure to note at least one task / message for each of the three data viz.**
 
-        -   Answer here
+        -   The shapes bar plot contained the top 10 shapes reported as ufos. Since there are only ten, a viewer can easily discern these differences. Additionally, this plot has a large difference between the top 1 (light) and the top 2 (circle), perhaps the author wanted to emphasize this difference of over a two-times amount. The US map contains 51 values, so the average viewer would only be able to extract general, relative trends among the 50 states (+DC). The uniqueness of this plot comes from the arrangement of rectangles being a rough shape of the continental US plus Alaska and Hawaii. This puts these data in spatial context that the average American would (hopefully) be familiar with. The third plot contains 7 x 24 = 168 values to be compared. Again, the author chose to use different shades, so the viewer is able to extract mostly general trends. This makes sense for this visual as well since its main purpose is to emphasize the time of day ufos are sighted, in the dead of night. In-between 5/6pm to 10pm, the circle plot is nearly identical, all dark, no ufos sighted. I think the author also wanted this to resemble a clock, hence the polar coordinates.
 
     c.  **Name at least one caveat to the "hierarchy of perceptual tasks" that the author employed to achieve a goal(s) you noted in question b?**
 
-        -   Answer here
+        -   Both the last two plots wanted to visualize general trends, the map of US and a 24 hour clock. Using a brighter shade of green to convey 'this rectangle/tile had more data in it" is pretty intuitive to a viewer, making a low hierarchy perceptual task a logical choice.
 
 21. **Describe two elements of this piece that you find visually-pleasing / easy to understand / intuitive. Why?**
 
-    -   Answer here
+    -   The latter two visualizations of the US map and clock stood out to me. The first reason it's something we haven't seen before yet unlike the first bar graph. The second reason is because they're very intuitive to understand because the information takes an overall shape that we're familiar with: the map of the US and a clock. These shapes combined with the opacity indicating the magnitude of whichever rectangle or tile really helps convey the information.
 
 22. **Describe two elements of this piece that you feel could be better presented in a different way. Why?**
 
-    -   Answer here
+    -   First, I noticed that the bottom time "12am" should be "12pm". I thought this was an error with something that I did but I checked with the original infographic and the error is also there. It confused me at first but I think most viewers could figure it out and realize that it should be 12pm instead. Second, the darks in the opacity parts of the visuals are a bit too dark to read. I find myself having to zoom in or really strain to try read the bottom-most bar "Changing" and I feel that all text should be read-able without needing extra effort.
 
 23. **Describe two new things that you learned by interpreting / annotating this code. These could be packages, functions, or even code organizational approaches that you hadn't previously known about or considered.**
 
-    -   Answer here
+    -   First, using `glue()` and html together. This unlocks a whole bunch more customization when it comes to text like font families and color. Second, the base and final plot creation steps. This was a really cool and creative way to build the final plot that I haven't thought of before. Essentially, build the title & caption first, build each visualization and quote, and then fill in the visuals afterwards, adjusting the position of each to your liking.
 
 24. **How, if at all, did you use AI tools to help you interpret this code? Describe your approach to using these tools for this assignment. In what ways was consulting the documentation more (or less) helpful than using AI?**
 
-    -   Answer here
+    -   The one part AI tools helped was with the comparison between `paste0` and `glue`. Looking at these documentations, it wasn't made clear about how they compare. I haven't really used `glue` before so having AI explain the specific example in the code confirmed what I initially thought. Usually if I'm trying to understand some code, I come up with an idea/theory first, and have AI confirm and explain more.
